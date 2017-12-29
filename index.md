@@ -1,37 +1,119 @@
-## Welcome to GitHub Pages
+<!doctype html>
+<html ng-app="myApp">
+<head>
+    <meta charset="utf-8">
+</head>
+<body>
+<div ng-controller="phoneController">
+    <p>Название: {{phone.name}}</p>
+    <p>Цена: {{phone.price}} $</p>
+    <p>Производитель: {{phone.company.name}}</p>
+    <input type="text" ng-model="name" />
+    <p >Name: {{name}}</p>
+    <my-div></my-div>
+    <my-name-div my-name="'test'"></my-name-div>
+</div>
 
-You can use the [editor on GitHub](https://github.com/sebay90/sebay90-gihub.io/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
+<div class="container">
+    <my-to-do></my-to-do>
+</div>
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="styles.css" >
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    var myApp=angular.module('myApp', []);
+    myApp.controller('phoneController', function($scope) {
 
-### Markdown
+        $scope.phone = {
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+            name: 'Nokia Lumia 630',
+            year: 2014,
+            price: 200,
+            company: {
+                name: 'Nokia',
+                country: 'Финляндия'
+            }
+        }
+    });
 
-```markdown
-Syntax highlighted code block
+    function toDoListContoller(){
+        console.log("todo");
 
-# Header 1
-## Header 2
-### Header 3
+//        this.todo = [
+//            {
+//                name: "survive"
+//            },
+//            {
+//                name: "some work"
+//            }
+//        ]
+        this.todo = (localStorage.getItem('todo')!== null) ? JSON.parse(localStorage.getItem('todo')): [];
 
-- Bulleted
-- List
 
-1. Numbered
-2. List
+        this.addTodo = function (){
+            console.log(this.todoname);
+            this.todo.push({
+                id: Math.random().toString(36).substr(2, 10),
+                name: this.todoname,
+                edit: false
+            });
+            console.log(this.todo);
+            localStorage.setItem("todo", JSON.stringify(this.todo));
+        }
 
-**Bold** and _Italic_ and `Code` text
+        this.delete = function (index){
+            this.todo.splice(index,1);
+            localStorage.setItem("todo", JSON.stringify(this.todo));
+        }
 
-[Link](url) and ![Image](src)
-```
+        this.edit = function (index){
+            this.todo[index].edit = true;
+        }
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+        this.save = function(index){
+            this.todo[index].edit = false;
+            localStorage.setItem("todo", JSON.stringify(this.todo));
+        }
+    }
 
-### Jekyll Themes
+    function MyDivController() {
+        console.log("test");
+    }
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/sebay90/sebay90-gihub.io/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+    function MyNameController () {
+        console.log("name");
+    }
 
-### Support or Contact
+    myApp.component('myNameDiv', {
+        transclude: false,
+        restrict: 'E',
+        scope: {},
+        bindings:{
+            myName: '='
+        },
+        controller: MyNameController,
+        template: '<div>{{$ctrl.myName}}</div>'
+    });
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+    myApp.component('myDiv', {
+        transclude: false,
+        restrict: 'E',
+        scope: false,
+        controller: MyDivController,
+        template: '<div>MyDiv <p>321321</p></div>'
+    });
+
+    myApp.component('myToDo', {
+        transclude: false,
+        restrict: 'E',
+        scope: {},
+        controller: toDoListContoller,
+        controllerAs: 'vm',
+        templateUrl: 'my-todo.html'
+    });
+
+</script>
+</body>
+</html>
